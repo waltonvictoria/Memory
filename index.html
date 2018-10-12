@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Memory</title>
+    <style>
+        body{
+            margin: 0 auto;
+            background: burlywood;
+        }
+        #tablero{
+            background: #CCC;
+            border: #000 2px solid;
+            box-sizing: border-box;
+            width: 710px;
+            height: 365px;
+            margin-top: 20px;
+            margin-left: calc(50vw - 355px);
+        }
+        #tablero > div{
+            background: brown;
+            background-image: url("img/card.png");
+            background-size: cover;
+            border: #000 1px solid;
+            box-sizing: border-box;
+            width: 100px;
+            height: 100px;
+            float: left;
+            margin: 15px 0px 0px 15px;
+            padding: 0px;
+            cursor: pointer;
+        }
+        input{
+            margin-left: calc(50vw - 40px);
+            margin-top: 10px;
+            width: 80px;
+            font-size: 20px;
+            border: #000 1px solid;
+            box-sizing: border-box;
+            border-radius: 15px;
+        }
+        @media only screen and (max-width: 400px) {
+            body {
+                background-color: lightblue;
+                }
+            #tablero{
+                background: #CCC;
+                border: #000 2px solid;
+                box-sizing: border-box;
+                width: 290px;
+                height: 560px;
+                margin-top: 20px;
+                margin-left: calc(50vw - 145px);
+            }
+            #tablero > div{
+                background: brown;
+                background-image: url("img/card.png");
+                background-size: cover;
+                border: #000 1px solid;
+                box-sizing: border-box;
+                width: 75px;
+                height: 75px;
+                float: left;
+                margin: 15px 0px 0px 15px;
+                padding: 0px;
+                cursor: pointer;
+            }
+        }
+    </style>
+    <script>
+        var cards = ["1", "1", "2", "2", "3", "3", "4", "4", "5", "5", "6", "6", "7", "7", "8", "8", "9", "9"];
+        var memory = [];
+        var cardIds = [];
+        var cardsTurnned = 0;
+
+        Array.prototype.memoryCardShuffle = function() {
+            var i = this.length, j , temp;
+
+            while (--i > 0) {
+                j = Math.floor(Math.random() * (i+1));
+                temp = this[j];
+                this[j] = this[i];
+                this[i] = temp;
+            }
+        }
+    function newGame(){
+        cardsTurnned = 0;
+        var t = "";
+        cards.memoryCardShuffle();
+        for (var i = 0; i < cards.length; i++){
+            t += '<div id="tile_'+i+'" onclick="memoryTurnCard(this, '+cards[i]+')"></div>';
+        }
+        document.getElementById("tablero").innerHTML = t;
+    }
+    function memoryTurnCard(tile,val){
+        if(tile.innerHTML == "" && memory.length < 2){
+            tile.style.background = '#FFF';
+            tile.style.backgroundImage = 'url("img/'+[val]+'.png")';
+            tile.style.backgroundSize = 'cover';
+
+            tile.innerHTML = "";
+            if(memory.length == 0){
+                memory.push(val);
+                cardIds.push(tile.id);
+            } else if(memory.length == 1){
+                memory.push(val);  
+                cardIds.push(tile.id);
+                if(memory[0] == memory[1]){
+                    cardsTurnned += 2;
+                        memory = [];
+                        cardIds = [];
+                }
+                else{
+                    function turnBack(){
+                        var tile_1 = document.getElementById(cardIds[0]);
+                        var tile_2 = document.getElementById(cardIds[1]);
+                        tile_1.style.background = 'brown';
+                        tile_1.style.backgroundImage = 'url("img/card.png")';
+                        tile_1.style.backgroundSize = 'cover';
+                        tile_1.innerHTML = "";
+                        tile_2.style.background = 'brown';
+                        tile_2.style.backgroundImage = 'url("img/card.png")';
+                        tile_2.style.backgroundSize = 'cover';
+                        tile_2.innerHTML = "";
+                        memory = [];
+                        cardIds = [];
+                    }
+                    setTimeout(turnBack, 1000);
+                }          
+            }
+        }
+    }
+
+       
+    </script>
+</head>
+<body>
+    <div id="tablero"></div>
+    <input type="button" value="Play" onclick="newGame()">
+</body>
+</html>
